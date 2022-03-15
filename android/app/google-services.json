@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "99604866161",
+    "project_id": "simple-apps-9b476",
+    "storage_bucket": "simple-apps-9b476.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99604866161:android:702ec9e96df6fbb2a967d0",
+        "android_client_info": {
+          "package_name": "com.happymammal.hmvideodownloader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "99604866161-mcd6ludacseg3k82l99sq1p80jjkbuas.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.happymammal.hmvideodownloader",
+            "certificate_hash": "331fb6659927c982768ba091736ede773fe95e8d"
+          }
+        },
+        {
+          "client_id": "99604866161-7i9hjapabfsgenkfo8qqn80odlsqu064.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh-AduSR8ay4UTBQca_Tuxo9YAdqs5ttE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "99604866161-7i9hjapabfsgenkfo8qqn80odlsqu064.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
