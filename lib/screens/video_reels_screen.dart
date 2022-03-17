@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hm_video_downloader/screens/downloads_screen.dart';
+import 'package:hm_video_downloader/utils/ad_helper.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
+import 'package:hm_video_downloader/widgets/my_banner_ad.dart';
 import 'package:hm_video_downloader/widgets/video_card.dart';
 
 class VideoReelsScreen extends StatefulWidget {
@@ -129,20 +131,30 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
             ),
           ),
         ),
-        body: PageView(
-          controller: _pageController,
-          scrollDirection: Axis.vertical,
-          physics: const BouncingScrollPhysics(),
-          children: List.generate(
-            widget.downloads.length,
-            (index) => VideoCard(
-              path: widget.downloads[index].path,
-              data: widget.videoData[index],
-              onVideoDeleted: () {
-                _showAlertDialog(context, index);
-              },
+        body: Column(
+          children: [
+            MyBannerAd(
+              type: MyBannerType.full,
+              adUnitId: AdHelper.videoCardBannerAdUnitId,
             ),
-          ),
+            Expanded(
+              child: PageView(
+                allowImplicitScrolling: false,
+                controller: _pageController,
+                scrollDirection: Axis.vertical,
+                children: List.generate(
+                  widget.downloads.length,
+                  (index) => VideoCard(
+                    path: widget.downloads[index].path,
+                    data: widget.videoData[index],
+                    onVideoDeleted: () {
+                      _showAlertDialog(context, index);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

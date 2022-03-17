@@ -1,11 +1,11 @@
-import 'dart:typed_data';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_player/video_player.dart';
 
 import '../utils/custom_colors.dart';
 
@@ -25,15 +25,21 @@ class MyThumbnail extends StatefulWidget {
 }
 
 class _MyThumbnailState extends State<MyThumbnail> {
-  Future<Uint8List?> _generateImageMemory(path) async {
-    return await VideoThumbnail.thumbnailData(
-      video: path,
-      imageFormat: ImageFormat.JPEG,
-      maxWidth: widget.data.width!,
-      maxHeight: widget.data.height!,
-      timeMs: 3000,
-      quality: 100,
-    );
+  VideoPlayerController? _controller;
+
+  @override
+  void initState() {
+    var _file = File(widget.path);
+    _controller = VideoPlayerController.file(_file)
+      ..addListener(() => setState(() {}))
+      ..initialize();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller!.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,23 +47,11 @@ class _MyThumbnailState extends State<MyThumbnail> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        FutureBuilder(
-          future: _generateImageMemory(widget.path),
-          builder: ((context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Image.memory(
-                snapshot.data as Uint8List,
-                width: 100.w,
-                height: 100.h,
-                cacheHeight: widget.data.height,
-                cacheWidth: widget.data.width,
-                fit: BoxFit.cover,
-              );
-            } else {
-              return Container();
-            }
-          }),
-        ),
+        (_controller != null && _controller!.value.isInitialized)
+            ? VideoPlayer(_controller!)
+            : const Center(
+                child: CircularProgressIndicator(),
+              ),
         Container(
           color: Colors.black12,
         ),

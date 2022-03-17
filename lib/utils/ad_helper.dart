@@ -31,7 +31,7 @@ class AdHelper {
   //INTERSTITIAL
   static String get downloadInterstialAdUnitId {
     if (kIsDebug) {
-      return "ca-app-pub-3940256099942544/8691691433";
+      return "ca-app-pub-3940256099942544/1033173712";
     } else {
       return "ca-app-pub-3215909327537946/4613675038";
     }

@@ -72,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.only(right: 8.w),
               child: IconButton(
                 onPressed: () {
-                  _loadInterstitalAd();
                   if (_isInterstitialAdReady) {
                     _interstitialAd.show();
                   }

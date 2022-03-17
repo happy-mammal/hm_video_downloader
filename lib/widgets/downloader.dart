@@ -423,7 +423,7 @@ class _DownloaderState extends State<Downloader>
       });
 
       var path = dir.path + _fileName;
-      _loadInterstitalAd(adUnitId: AdHelper.downloaderScreenBannerAdUnitId);
+
       try {
         setState(() => _isDownloading = true);
         await dio.download(
@@ -436,6 +436,7 @@ class _DownloaderState extends State<Downloader>
           },
           deleteOnError: true,
         ).then((_) {
+          _loadInterstitalAd(adUnitId: AdHelper.downloadInterstialAdUnitId);
           setState(() => _isDownloading = false);
           setState(() => _progressValue = 0.0);
 
@@ -462,9 +463,9 @@ class _DownloaderState extends State<Downloader>
   }
 
   _onLinkPasted(String url) async {
+    _loadInterstitalAd(adUnitId: AdHelper.downloadInterstialAdUnitId);
     var _response = await _getExtrationMethod(widget.type, url);
     setState(() => _video = _response);
-    _loadInterstitalAd(adUnitId: AdHelper.downloaderScreenBannerAdUnitId);
     if (_video != null) {
       for (var _quality in _video!.videos!) {
         _qualities!.add(_quality);

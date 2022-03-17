@@ -146,13 +146,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.3.1"
-  flutter_staggered_grid_view:
-    dependency: "direct main"
-    description:
-      name: flutter_staggered_grid_view
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -233,13 +226,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  loading_animation_widget:
-    dependency: "direct main"
-    description:
-      name: loading_animation_widget
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0+3"
   logger:
     dependency: transitive
     description:
@@ -588,13 +574,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
-  video_controls:
-    dependency: "direct main"
-    description:
-      name: video_controls
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
   video_player:
     dependency: "direct main"
     description:
@@ -630,13 +609,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.7"
-  video_thumbnail:
-    dependency: "direct main"
-    description:
-      name: video_thumbnail
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.6"
   wakelock:
     dependency: transitive
     description:

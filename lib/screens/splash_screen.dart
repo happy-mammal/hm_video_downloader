@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hm_video_downloader/screens/home_screen.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -58,13 +57,6 @@ class _SplashScreenState extends State<SplashScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 10.h),
-                  Center(
-                    child: LoadingAnimationWidget.halfTriangleDot(
-                      color: CustomColors.primary,
-                      size: 130.w,
-                    ),
-                  ),
                 ],
               ),
               Column(
@@ -72,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    "Very fast, secure and 100% free.",
+                    "Very fast, secure and private.",
                     textAlign: TextAlign.left,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
@@ -114,7 +106,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   SizedBox(height: 5.h),
                   Text(
-                    "HM Video Downloader is the easiest application to download videos from Facebook, YouTube and Twitter.",
+                    "HM Video Downloader is the easiest application to download videos from multiple sources.",
                     textAlign: TextAlign.left,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
