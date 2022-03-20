@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hm_video_downloader/data/video_downloader_api.dart';
+import 'package:hm_video_downloader/repositories/video_downloader_repository.dart';
 import 'package:hm_video_downloader/screens/home_screen.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
 
@@ -22,7 +24,15 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       );
     });
+    _dummy();
     super.initState();
+  }
+
+  _dummy() async {
+    VideoDownloaderRepository _repo =
+        VideoDownloaderRepository(api: VideoDownloaderAPI());
+    await _repo.getInstagramVideos(
+        "https://www.instagram.com/reel/Ca_Ze6XjV7V/?utm_medium=copy_link");
   }
 
   @override

@@ -34,9 +34,12 @@ class _VideoCardState extends State<VideoCard> {
   void initState() {
     var _file = File(widget.path);
     _controller = VideoPlayerController.file(_file)
-      ..addListener(() => setState(() {}))
+      ..addListener(() {})
       ..setLooping(true)
-      ..initialize().then((value) => _controller!.play());
+      ..initialize().then((value) {
+        setState(() {});
+        _controller!.play();
+      });
     var _date = (widget.data.title!.split("-"))[1].substring(0, 8);
     var _time = (widget.data.title!.split("-"))[1].substring(8);
     _timeago = timeago.format(DateTime.parse("${_date}T$_time"));
@@ -55,9 +58,12 @@ class _VideoCardState extends State<VideoCard> {
       alignment: Alignment.center,
       children: [
         (_controller != null && _controller!.value.isInitialized)
-            ? AspectRatio(
-                aspectRatio: _controller!.value.aspectRatio,
-                child: VideoPlayer(_controller!),
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: AspectRatio(
+                  aspectRatio: _controller!.value.aspectRatio,
+                  child: VideoPlayer(_controller!),
+                ),
               )
             : const Center(
                 child: CircularProgressIndicator(),
@@ -140,6 +146,7 @@ class _VideoCardState extends State<VideoCard> {
                           _controller!.value.isPlaying
                               ? _controller!.pause()
                               : _controller!.play();
+                          setState(() {});
                         },
                         icon: Icon(
                           _controller!.value.isPlaying
@@ -150,7 +157,7 @@ class _VideoCardState extends State<VideoCard> {
                         ),
                       ),
                       SizedBox(
-                        width: widget.data.width!.toDouble() - 360,
+                        width: 240.w,
                         height: 5.h,
                         child: VideoProgressIndicator(
                           _controller!,
@@ -176,18 +183,19 @@ class _VideoCardState extends State<VideoCard> {
                     icon: Icon(
                       FontAwesome5.share,
                       color: CustomColors.white,
-                      size: 16.w,
+                      size: 20.w,
                     ),
                   ),
+                  SizedBox(height: 20.h),
                   IconButton(
                     onPressed: () => widget.onVideoDeleted(),
                     icon: Icon(
                       FontAwesome5.trash,
                       color: CustomColors.white,
-                      size: 16.w,
+                      size: 20.w,
                     ),
                   ),
-                  SizedBox(height: 60.h),
+                  SizedBox(height: 40.h),
                 ],
               ),
             ],

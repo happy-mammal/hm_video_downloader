@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:file_manager/controller/file_manager_controller.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hm_video_downloader/screens/video_reels_screen.dart';
@@ -46,6 +47,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       }
     }
     setState(() => _downloads = _data);
+    setState(() {});
   }
 
   _showAlertDialog(BuildContext context, int index) {
@@ -123,57 +125,59 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       appBar: AppBar(
         backgroundColor: CustomColors.appBar,
         iconTheme: IconThemeData(color: CustomColors.primary),
+        elevation: 0,
         title: Text(
           "Downloaded Videos",
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 20,
             color: CustomColors.white,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            MyBannerAd(
-                type: MyBannerType.large,
-                adUnitId: AdHelper.downloadsScreenBannerAdUnitId),
-            GridView.builder(
-              shrinkWrap: true,
-              primary: false,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 1,
-                crossAxisSpacing: 1,
-              ),
-              itemCount: _downloads.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => VideoReelsScreen(
-                          initialIndex: index,
-                          downloads: _downloads,
-                          videoData: _videoData,
-                        ),
-                      ),
-                    );
-                  },
-                  child: MyThumbnail(
-                    path: _downloads[index].path,
-                    data: _videoData[index],
-                    onVideoDeleted: () {
-                      _showAlertDialog(context, index);
-                    },
+      body: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: ListView.separated(
+          itemCount: _downloads.length,
+          padding: EdgeInsets.symmetric(vertical: 5.h),
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => VideoReelsScreen(
+                      initialIndex: index,
+                      downloads: _downloads,
+                      videoData: _videoData,
+                    ),
                   ),
                 );
               },
-            ),
-          ],
+              child: MyThumbnail(
+                path: _downloads[index].path,
+                data: _videoData[index],
+                onVideoDeleted: () {
+                  _showAlertDialog(context, index);
+                },
+              ),
+            );
+          },
+          separatorBuilder: (context, index) {
+            if (index % 2 == 0) {
+              return MyBannerAd(
+                type: MyBannerType.full,
+                adUnitId: AdHelper.downloadsScreenBannerAdUnitId,
+              );
+            } else {
+              return Divider(
+                height: 0,
+                thickness: 5.h,
+                color: CustomColors.backGround,
+              );
+            }
+          },
         ),
       ),
     );

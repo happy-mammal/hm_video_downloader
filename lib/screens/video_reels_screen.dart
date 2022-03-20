@@ -29,8 +29,8 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
 
   @override
   void initState() {
-    super.initState();
     _pageController = PageController(initialPage: widget.initialIndex);
+    super.initState();
   }
 
   _showAlertDialog(BuildContext context, int index) {
@@ -122,12 +122,13 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
         appBar: AppBar(
           backgroundColor: CustomColors.appBar,
           iconTheme: IconThemeData(color: CustomColors.primary),
+          elevation: 0,
           title: Text(
             "Watch Videos",
             style: GoogleFonts.poppins(
-              fontSize: 25,
+              fontSize: 20,
               color: CustomColors.white,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -135,7 +136,7 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
           children: [
             MyBannerAd(
               type: MyBannerType.full,
-              adUnitId: AdHelper.videoCardBannerAdUnitId,
+              adUnitId: AdHelper.videosScreenBannerAdUnitId,
             ),
             Expanded(
               child: PageView(
@@ -144,13 +145,15 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
                 scrollDirection: Axis.vertical,
                 children: List.generate(
                   widget.downloads.length,
-                  (index) => VideoCard(
-                    path: widget.downloads[index].path,
-                    data: widget.videoData[index],
-                    onVideoDeleted: () {
-                      _showAlertDialog(context, index);
-                    },
-                  ),
+                  (index) {
+                    return VideoCard(
+                      path: widget.downloads[index].path,
+                      data: widget.videoData[index],
+                      onVideoDeleted: () {
+                        _showAlertDialog(context, index);
+                      },
+                    );
+                  },
                 ),
               ),
             ),

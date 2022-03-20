@@ -55,267 +55,283 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Developer",
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                color: CustomColors.white,
-                fontWeight: FontWeight.w400,
+    return Scaffold(
+      backgroundColor: CustomColors.backGround,
+      appBar: AppBar(
+        backgroundColor: CustomColors.appBar,
+        iconTheme: IconThemeData(color: CustomColors.primary),
+        elevation: 0,
+        title: Text(
+          "About Us",
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            color: CustomColors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Developer",
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  color: CustomColors.white,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
-            SizedBox(height: 5.h),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.person_rounded,
-                        color: CustomColors.primary,
-                        size: 30.w,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        "Happy Mammal",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w400,
+              SizedBox(height: 5.h),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.person_rounded,
+                          color: CustomColors.primary,
+                          size: 30.w,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.open_in_new_rounded,
-                        color: CustomColors.primary,
-                        size: 30.w,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        "Check out other apps",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w400,
+                        SizedBox(width: 10.w),
+                        Text(
+                          "Happy Mammal",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.w),
-                color: CustomColors.appBar,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              "App",
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                color: CustomColors.white,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(height: 5.h),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.update_rounded,
-                        color: CustomColors.primary,
-                        size: 30.w,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        "Version 1.0",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w400,
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.open_in_new_rounded,
+                          color: CustomColors.primary,
+                          size: 30.w,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.policy_rounded,
-                        color: CustomColors.primary,
-                        size: 30.w,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        "Privacy Policy",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w400,
+                        SizedBox(width: 10.w),
+                        Text(
+                          "Check out other apps",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  color: CustomColors.appBar,
+                ),
               ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.w),
-                color: CustomColors.appBar,
+              SizedBox(height: 20.h),
+              Text(
+                "App",
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  color: CustomColors.white,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              "Can you please",
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                color: CustomColors.white,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(height: 5.h),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.rate_review_rounded,
-                        color: CustomColors.primary,
-                        size: 30.w,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        "Rate & Review Us",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w400,
+              SizedBox(height: 5.h),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.update_rounded,
+                          color: CustomColors.primary,
+                          size: 30.w,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.ios_share_rounded,
-                        color: CustomColors.primary,
-                        size: 30.w,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        "Share with your friends",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w400,
+                        SizedBox(width: 10.w),
+                        Text(
+                          "Version 1.0",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.w),
-                color: CustomColors.appBar,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              "Storage",
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                color: CustomColors.white,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(height: 5.h),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        _fs1,
-                        style: GoogleFonts.poppins(
-                          fontSize: 30,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w700,
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.policy_rounded,
+                          color: CustomColors.primary,
+                          size: 30.w,
                         ),
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        "available",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w300,
+                        SizedBox(width: 10.w),
+                        Text(
+                          "Privacy Policy",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  LinearProgressIndicator(
-                    value: _consumed,
-                    minHeight: 8.h,
-                  ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "$_fs2 used by app",
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      Text(
-                        _fs1,
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          color: CustomColors.white,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  color: CustomColors.appBar,
+                ),
               ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.w),
-                color: CustomColors.appBar,
+              SizedBox(height: 20.h),
+              Text(
+                "Can you please",
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  color: CustomColors.white,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
-            SizedBox(height: 20.h),
-          ],
+              SizedBox(height: 5.h),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.rate_review_rounded,
+                          color: CustomColors.primary,
+                          size: 30.w,
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          "Rate & Review Us",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.ios_share_rounded,
+                          color: CustomColors.primary,
+                          size: 30.w,
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          "Share with your friends",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  color: CustomColors.appBar,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                "Storage",
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  color: CustomColors.white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              SizedBox(height: 5.h),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          _fs1,
+                          style: GoogleFonts.poppins(
+                            fontSize: 30,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          "available",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    LinearProgressIndicator(
+                      value: _consumed,
+                      minHeight: 8.h,
+                    ),
+                    SizedBox(height: 10.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "$_fs2 used by app",
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                        Text(
+                          _fs1,
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  color: CustomColors.appBar,
+                ),
+              ),
+              SizedBox(height: 20.h),
+            ],
+          ),
         ),
       ),
     );

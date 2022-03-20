@@ -6,7 +6,7 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 import '../utils/custom_colors.dart';
 
 class MyThumbnail extends StatefulWidget {
@@ -26,13 +26,19 @@ class MyThumbnail extends StatefulWidget {
 
 class _MyThumbnailState extends State<MyThumbnail> {
   VideoPlayerController? _controller;
-
+  String? _timeago;
   @override
   void initState() {
+    var _date = (widget.data.title!.split("-"))[1].substring(0, 8);
+    var _time = (widget.data.title!.split("-"))[1].substring(8);
+    _timeago = timeago.format(DateTime.parse("${_date}T$_time"));
     var _file = File(widget.path);
     _controller = VideoPlayerController.file(_file)
-      ..addListener(() => setState(() {}))
-      ..initialize();
+      ..addListener(() {})
+      ..setLooping(false)
+      ..initialize().then((value) {
+        setState(() {});
+      });
     super.initState();
   }
 
@@ -44,73 +50,80 @@ class _MyThumbnailState extends State<MyThumbnail> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        (_controller != null && _controller!.value.isInitialized)
-            ? VideoPlayer(_controller!)
-            : const Center(
-                child: CircularProgressIndicator(),
-              ),
-        Container(
-          color: Colors.black12,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.end,
+    return Container(
+      child: Row(
+        children: [
+          SizedBox(
+            width: 110.w,
+            height: 95.h,
+            child: ClipRRect(
+              child: (_controller != null && _controller!.value.isInitialized)
+                  ? VideoPlayer(_controller!)
+                  : const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  onPressed: () async {
-                    await Share.shareFiles([widget.path]);
-                  },
-                  icon: Icon(
-                    FontAwesome5.share,
+                Text(
+                  _timeago!,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
                     color: CustomColors.white,
-                    size: 16.w,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                IconButton(
-                  onPressed: () => widget.onVideoDeleted(),
-                  icon: Icon(
-                    FontAwesome5.trash,
+                SizedBox(height: 5.h),
+                Text(
+                  "From ${widget.data.title!.substring(0, widget.data.title!.indexOf('-'))}",
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
                     color: CustomColors.white,
-                    size: 16.w,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
+                SizedBox(height: 5.h),
+                Text(
+                  " ${((widget.data.filesize as int) * 0.00000095367432).toStringAsFixed(2)} MB",
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: CustomColors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 5.h),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    " ${widget.data.title!.substring(0, widget.data.title!.indexOf('-'))}",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      color: CustomColors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    " ${((widget.data.filesize as int) * 0.00000095367432).toStringAsFixed(2)} MB",
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: CustomColors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+          ),
+          Column(
+            children: [
+              IconButton(
+                onPressed: () async {
+                  await Share.shareFiles([widget.path]);
+                },
+                icon: Icon(
+                  FontAwesome5.share,
+                  color: CustomColors.white,
+                  size: 16.w,
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+              IconButton(
+                onPressed: () => widget.onVideoDeleted(),
+                icon: Icon(
+                  FontAwesome5.trash,
+                  color: CustomColors.white,
+                  size: 16.w,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      color: CustomColors.appBar,
     );
   }
 }

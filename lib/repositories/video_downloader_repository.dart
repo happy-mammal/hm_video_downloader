@@ -2,16 +2,17 @@ import 'dart:convert';
 import 'package:hm_video_downloader/data/video_downloader_api.dart';
 import 'package:hm_video_downloader/models/video_download_model.dart';
 import 'package:hm_video_downloader/models/video_quality_model.dart';
+import 'package:insta_extractor/insta_extractor.dart';
 
 class VideoDownloaderRepository {
-  late VideoDownloaderAPI _api;
+  late VideoDownloaderAPI api;
 
-  VideoDownloaderRepository(this._api) {
-    _api = VideoDownloaderAPI();
+  VideoDownloaderRepository({required this.api}) {
+    api = VideoDownloaderAPI();
   }
 
   Future<VideoDownloadModel?> getAvailableYTVideos(String url) async {
-    var _response = await _api.getYouTubeVideoLinks(url);
+    var _response = await api.getYouTubeVideoLinks(url);
 
     if (_response.statusCode == 200) {
       var _result = Map.from(jsonDecode(_response.body));
@@ -39,7 +40,7 @@ class VideoDownloaderRepository {
   }
 
   Future<VideoDownloadModel?> getAvailableFBVideos(String url) async {
-    var _response = await _api.getFacebookVideoLinks(url);
+    var _response = await api.getFacebookVideoLinks(url);
 
     if (_response.statusCode == 200) {
       var _result = Map.from(jsonDecode(_response.body));
@@ -67,7 +68,7 @@ class VideoDownloaderRepository {
   }
 
   Future<VideoDownloadModel?> getAvailableTWVideos(String url) async {
-    var _response = await _api.getTwitterVideoLinks(url);
+    var _response = await api.getTwitterVideoLinks(url);
 
     if (_response.statusCode == 200) {
       var _result = Map.from(jsonDecode(_response.body));
@@ -93,6 +94,26 @@ class VideoDownloaderRepository {
       return null;
     }
   }
+
+  Future<VideoDownloadModel?> getInstagramVideos(String url) async {
+    Graphql _response = await InstaExtractor.getDetails(url);
+
+    if (_response.shortcodeMedia.content.isVideo) {
+      return VideoDownloadModel.fromJson({
+        "title": _response.shortcodeMedia.owner.username,
+        "source": url,
+        "thumbnail": _response.shortcodeMedia.content.displayUrl,
+        "videos": [
+          VideoQualityModel(
+            url: _response.shortcodeMedia.content.videoUrl,
+            quality: "720",
+          )
+        ],
+      });
+    } else {
+      return null;
+    }
+  }
 }
 
-enum VideoType { youtube, facebook, twitter }
+enum VideoType { youtube, facebook, twitter, none }

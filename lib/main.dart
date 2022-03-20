@@ -7,6 +7,7 @@ import 'package:hm_video_downloader/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+
   runApp(const MainApp());
 }
 
