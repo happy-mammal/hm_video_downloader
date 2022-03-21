@@ -95,7 +95,7 @@ class VideoDownloaderRepository {
     }
   }
 
-  Future<VideoDownloadModel?> getInstagramVideos(String url) async {
+  Future<VideoDownloadModel?> getAvailableIGVideos(String url) async {
     Graphql _response = await InstaExtractor.getDetails(url);
 
     if (_response.shortcodeMedia.content.isVideo) {
@@ -116,4 +116,4 @@ class VideoDownloaderRepository {
   }
 }
 
-enum VideoType { youtube, facebook, twitter, none }
+enum VideoType { youtube, facebook, twitter, instagram, none }

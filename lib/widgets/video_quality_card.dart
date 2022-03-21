@@ -37,6 +37,9 @@ class _VideoQualityCardState extends State<VideoQualityCard> {
       case VideoType.youtube:
         return widget.model.quality;
 
+      case VideoType.instagram:
+        return widget.model.quality;
+
       default:
         return null;
     }
@@ -56,6 +59,10 @@ class _VideoQualityCardState extends State<VideoQualityCard> {
             widget.model.quality!.substring(_quality!.indexOf(":") + 1));
 
       case VideoType.youtube:
+        return int.parse(
+            widget.model.quality!.substring(_quality!.indexOf(":") + 1));
+
+      case VideoType.instagram:
         return int.parse(
             widget.model.quality!.substring(_quality!.indexOf(":") + 1));
 

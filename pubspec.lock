@@ -707,6 +707,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
+  water_drop_nav_bar:
+    dependency: "direct main"
+    description:
+      name: water_drop_nav_bar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0+8"
   win32:
     dependency: transitive
     description:

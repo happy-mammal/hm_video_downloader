@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -10,8 +9,6 @@ import 'package:hm_video_downloader/data/video_downloader_api.dart';
 import 'package:hm_video_downloader/models/video_download_model.dart';
 import 'package:hm_video_downloader/models/video_quality_model.dart';
 import 'package:hm_video_downloader/repositories/video_downloader_repository.dart';
-import 'package:hm_video_downloader/screens/about_us_screen.dart';
-import 'package:hm_video_downloader/screens/downloads_screen.dart';
 import 'package:hm_video_downloader/utils/ad_helper.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
 import 'package:hm_video_downloader/widgets/my_banner_ad.dart';
@@ -74,55 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.backGround,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: CustomColors.appBar,
-        elevation: 0,
-        title: Text(
-          "HM Video Downloader",
-          textScaleFactor: ScreenUtil().textScaleFactor,
-          style: GoogleFonts.poppins(
-            fontSize: 20,
-            color: CustomColors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const AboutUsScreen(),
-                ),
-              );
-            },
-            icon: Icon(
-              Icons.info_outline_rounded,
-              color: CustomColors.primary,
-              size: 26.w,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 8.w),
-            child: IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const DownloadsScreen(),
-                  ),
-                );
-              },
-              icon: Icon(
-                FontAwesome.download,
-                color: CustomColors.primary,
-                size: 26.w,
-              ),
-            ),
-          ),
-        ],
-      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
         child: SingleChildScrollView(
@@ -230,7 +178,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        _showBottomModalSheet();
                         if (_isDownloading) {
                           _showSnackBar(
                               "Try again later! Downloading in progress.");
@@ -394,79 +341,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _showBottomModalSheet() {
-    showModalBottomSheet<void>(
-      context: context,
-      isDismissible: false,
-      enableDrag: false,
-      backgroundColor: CustomColors.appBar,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20.w),
-        topRight: Radius.circular(20.w),
-      )),
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Downloading from Facebook",
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      color: CustomColors.white,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    icon: Icon(
-                      Icons.close_rounded,
-                      color: CustomColors.primary,
-                    ),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 150,
-                    height: 100,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10.w),
-                      child: Image.network(
-                        "https://pbs.twimg.com/ext_tw_video_thumb/1504471627987226625/pu/img/MxFUqTI6v5FkGT58.jpg",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        "20220320104412.mp4",
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          color: CustomColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   IconData? get _getBrandIcon {
     switch (_videoType) {
       case VideoType.facebook:
@@ -494,6 +368,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return await _repository.getAvailableTWVideos(url);
       case VideoType.youtube:
         return await _repository.getAvailableYTVideos(url);
+      case VideoType.instagram:
+        return await _repository.getAvailableIGVideos(url);
       default:
         return null;
     }
@@ -625,6 +501,8 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() => _videoType = VideoType.youtube);
     } else if (url.contains("twitter.com")) {
       setState(() => _videoType = VideoType.twitter);
+    } else if (url.contains("instagram.com")) {
+      setState(() => _videoType = VideoType.instagram);
     } else {
       setState(() => _videoType = VideoType.none);
     }

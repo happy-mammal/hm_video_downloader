@@ -57,19 +57,6 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.backGround,
-      appBar: AppBar(
-        backgroundColor: CustomColors.appBar,
-        iconTheme: IconThemeData(color: CustomColors.primary),
-        elevation: 0,
-        title: Text(
-          "About Us",
-          style: GoogleFonts.poppins(
-            fontSize: 20,
-            color: CustomColors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(

@@ -28,6 +28,7 @@ dependencies:
   storage_space: ^1.0.1+5
   timeago: ^3.2.2
   video_player: ^2.3.0
+  water_drop_nav_bar: ^2.1.0+8
 
 dev_dependencies:
   change_app_package_name: ^1.0.0

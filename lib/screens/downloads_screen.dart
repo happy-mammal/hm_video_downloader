@@ -122,19 +122,6 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.backGround,
-      appBar: AppBar(
-        backgroundColor: CustomColors.appBar,
-        iconTheme: IconThemeData(color: CustomColors.primary),
-        elevation: 0,
-        title: Text(
-          "Downloaded Videos",
-          style: GoogleFonts.poppins(
-            fontSize: 20,
-            color: CustomColors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
