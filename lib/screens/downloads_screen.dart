@@ -1,55 +1,31 @@
 import 'dart:io';
-import 'package:file_manager/controller/file_manager_controller.dart';
-import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hm_video_downloader/screens/video_reels_screen.dart';
 import 'package:hm_video_downloader/utils/ad_helper.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
 import 'package:hm_video_downloader/widgets/my_banner_ad.dart';
 import 'package:hm_video_downloader/widgets/my_thumbnail.dart';
-import 'package:path_provider/path_provider.dart';
 
 class DownloadsScreen extends StatefulWidget {
-  const DownloadsScreen({Key? key}) : super(key: key);
+  final List<VideoData> videoData;
+  final List<FileSystemEntity> downloads;
+  final VoidCallback onVideoDeleted;
+  final ValueChanged<int> onCardTap;
+  const DownloadsScreen({
+    Key? key,
+    required this.videoData,
+    required this.downloads,
+    required this.onVideoDeleted,
+    required this.onCardTap,
+  }) : super(key: key);
 
   @override
   State<DownloadsScreen> createState() => _DownloadsScreenState();
 }
 
 class _DownloadsScreenState extends State<DownloadsScreen> {
-  final FileManagerController controller = FileManagerController();
-  List<FileSystemEntity> _downloads = [];
-  final List<VideoData> _videoData = [];
-
-  @override
-  void initState() {
-    _getDownloads();
-    super.initState();
-  }
-
-  Future<void> _getDownloads() async {
-    final videoInfo = FlutterVideoInfo();
-    final directory = await getApplicationDocumentsDirectory();
-    final dir = directory.path;
-    final myDir = Directory(dir);
-    List<FileSystemEntity> _data = [];
-    List<FileSystemEntity> _folders =
-        myDir.listSync(recursive: true, followLinks: false);
-
-    for (var item in _folders) {
-      if (item.path.contains(".mp4")) {
-        _data.add(item);
-        var _info = await videoInfo.getVideoInfo(item.path);
-        _videoData.add(_info!);
-      }
-    }
-    setState(() => _downloads = _data);
-    setState(() {});
-  }
-
   _showAlertDialog(BuildContext context, int index) {
     Widget cancelButton = TextButton(
       child: Text(
@@ -75,14 +51,14 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       ),
       onPressed: () async {
         try {
-          final file = File(_downloads[index].path);
+          final file = File(widget.downloads[index].path);
           await file.delete();
         } catch (e) {
           debugPrint(e.toString());
         }
         Navigator.of(context, rootNavigator: true).pop('dialog');
 
-        _getDownloads();
+        widget.onVideoDeleted();
       },
     );
 
@@ -120,52 +96,38 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CustomColors.backGround,
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: ListView.separated(
-          itemCount: _downloads.length,
-          padding: EdgeInsets.symmetric(vertical: 5.h),
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => VideoReelsScreen(
-                      initialIndex: index,
-                      downloads: _downloads,
-                      videoData: _videoData,
-                    ),
-                  ),
-                );
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: ListView.separated(
+        itemCount: widget.downloads.length,
+        padding: EdgeInsets.symmetric(vertical: 5.h),
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () => widget.onCardTap(index),
+            child: MyThumbnail(
+              path: widget.downloads[index].path,
+              data: widget.videoData[index],
+              onVideoDeleted: () {
+                _showAlertDialog(context, index);
               },
-              child: MyThumbnail(
-                path: _downloads[index].path,
-                data: _videoData[index],
-                onVideoDeleted: () {
-                  _showAlertDialog(context, index);
-                },
-              ),
+            ),
+          );
+        },
+        separatorBuilder: (context, index) {
+          if (index % 2 == 0) {
+            return MyBannerAd(
+              type: MyBannerType.full,
+              adUnitId: AdHelper.downloadsScreenBannerAdUnitId,
             );
-          },
-          separatorBuilder: (context, index) {
-            if (index % 2 == 0) {
-              return MyBannerAd(
-                type: MyBannerType.full,
-                adUnitId: AdHelper.downloadsScreenBannerAdUnitId,
-              );
-            } else {
-              return Divider(
-                height: 0,
-                thickness: 5.h,
-                color: CustomColors.backGround,
-              );
-            }
-          },
-        ),
+          } else {
+            return Divider(
+              height: 0,
+              thickness: 5.h,
+              color: CustomColors.backGround,
+            );
+          }
+        },
       ),
     );
   }

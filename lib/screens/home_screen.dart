@@ -18,7 +18,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final VoidCallback onDownloadCompleted;
+  const HomeScreen({
+    Key? key,
+    required this.onDownloadCompleted,
+  }) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -69,273 +73,270 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CustomColors.backGround,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Enter URL Here",
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  color: CustomColors.white,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Enter URL Here",
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                color: CustomColors.white,
+              ),
+            ),
+            SizedBox(height: 10.h),
+            TextField(
+              controller: _controller,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              enabled: false,
+              cursorWidth: 1.w,
+              keyboardType: TextInputType.visiblePassword,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 10.w,
+                  vertical: 12.h,
+                ),
+                filled: true,
+                fillColor: CustomColors.appBar,
+                suffixIcon: Icon(
+                  _getBrandIcon,
+                  color: CustomColors.primary,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(10.w),
                 ),
               ),
-              SizedBox(height: 10.h),
-              TextField(
-                controller: _controller,
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-                enabled: false,
-                cursorWidth: 1.w,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 12.h,
-                  ),
-                  filled: true,
-                  fillColor: CustomColors.appBar,
-                  suffixIcon: Icon(
-                    _getBrandIcon,
-                    color: CustomColors.primary,
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10.w),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_isDownloading) {
-                          _showSnackBar(
-                              "Try again later! Downloading in progress.");
-                        } else {
-                          setState(() => _isLoading = false);
-                          _controller.text = "";
-                          setState(() => _qualities = []);
-                          setState(() => _isLoading = true);
+            ),
+            SizedBox(height: 20.h),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_isDownloading) {
+                        _showSnackBar(
+                            "Try again later! Downloading in progress.");
+                      } else {
+                        setState(() => _isLoading = false);
+                        _controller.text = "";
+                        setState(() => _qualities = []);
+                        setState(() => _isLoading = true);
 
-                          Clipboard.getData(Clipboard.kTextPlain)
-                              .then((value) async {
-                            bool _hasString = await Clipboard.hasStrings();
-                            if (_hasString) {
-                              _controller.text = value!.text!;
-                              if (value.text!.isEmpty ||
-                                  _controller.text.isEmpty) {
-                                _showSnackBar("Please Enter Video URL");
-                              } else {
-                                _setVideoType(value.text!);
-
-                                await _onLinkPasted(value.text!);
-                              }
+                        Clipboard.getData(Clipboard.kTextPlain)
+                            .then((value) async {
+                          bool _hasString = await Clipboard.hasStrings();
+                          if (_hasString) {
+                            _controller.text = value!.text!;
+                            if (value.text!.isEmpty ||
+                                _controller.text.isEmpty) {
+                              _showSnackBar("Please Enter Video URL");
                             } else {
-                              _showSnackBar(
-                                  "Empty content pasted! Please try again.");
-                            }
+                              _setVideoType(value.text!);
 
-                            setState(() => _isLoading = false);
-                          });
-                        }
-                      },
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.h),
-                          child: Text(
-                            "Paste Link",
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.poppins(
-                              fontSize: 20,
-                              color: CustomColors.appBar,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(CustomColors.primary),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.w),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 20.w),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_isDownloading) {
-                          _showSnackBar(
-                              "Try again later! Downloading in progress.");
-                        } else {
+                              await _onLinkPasted(value.text!);
+                            }
+                          } else {
+                            _showSnackBar(
+                                "Empty content pasted! Please try again.");
+                          }
+
                           setState(() => _isLoading = false);
-                          _controller.text = "";
-                          setState(() => _qualities = []);
-                        }
-                      },
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.h),
-                          child: Text(
-                            "Clear Link",
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.poppins(
-                              fontSize: 20,
-                              color: CustomColors.appBar,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(CustomColors.primary),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.w),
+                        });
+                      }
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: Text(
+                          "Paste Link",
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.appBar,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                     ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(CustomColors.primary),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.w),
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              _isLoading ? SizedBox(height: 20.h) : SizedBox(height: 10.h),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : !_isDownloading
-                      ? (_qualities != null && _qualities!.isNotEmpty)
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Select Video Quality",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 20,
-                                    color: CustomColors.white,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5.h,
-                                ),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  primary: false,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: _qualities!.length,
-                                  itemBuilder: (context, index) =>
-                                      VideoQualityCard(
-                                    model: _qualities![index],
-                                    type: _videoType,
-                                    onTap: () async {
-                                      if (_isDownloading) {
-                                        _showSnackBar(
-                                            "Try again later! Downloading in progress.");
-                                      } else {
-                                        await _performDownloading(
-                                            _qualities![index].url!);
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            )
-                          : _qualities == null
-                              ? Text(
-                                  "hmm, this link looks too complicated for me or either i don't supported it yet... Can you try another one?",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 20,
-                                    color: CustomColors.white,
-                                  ),
-                                )
-                              : Container()
-                      : Container(),
-              _isDownloading ? SizedBox(height: 20.h) : SizedBox(height: 10.h),
-              _isDownloading
-                  ? Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 12.w, vertical: 12.h),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                SizedBox(width: 20.w),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_isDownloading) {
+                        _showSnackBar(
+                            "Try again later! Downloading in progress.");
+                      } else {
+                        setState(() => _isLoading = false);
+                        _controller.text = "";
+                        setState(() => _qualities = []);
+                      }
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: Text(
+                          "Clear Link",
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.appBar,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(CustomColors.primary),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.w),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            _isLoading ? SizedBox(height: 20.h) : SizedBox(height: 10.h),
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : !_isDownloading
+                    ? (_qualities != null && _qualities!.isNotEmpty)
+                        ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.downloading,
-                                          color: CustomColors.primary),
-                                      SizedBox(width: 10.w),
-                                      Text(
-                                        "Downloading",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 18,
-                                          color: CustomColors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 6.h),
-                                  Text(
-                                    _fileName.substring(1),
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 18,
-                                      color: CustomColors.white,
-                                      fontWeight: FontWeight.w300,
-                                    ),
-                                  ),
-                                ],
-                              ),
                               Text(
-                                "${_progressValue.toStringAsFixed(0)}%",
+                                "Select Video Quality",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 24,
+                                  fontSize: 20,
                                   color: CustomColors.white,
-                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5.h,
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                primary: false,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: _qualities!.length,
+                                itemBuilder: (context, index) =>
+                                    VideoQualityCard(
+                                  model: _qualities![index],
+                                  type: _videoType,
+                                  onTap: () async {
+                                    if (_isDownloading) {
+                                      _showSnackBar(
+                                          "Try again later! Downloading in progress.");
+                                    } else {
+                                      await _performDownloading(
+                                          _qualities![index].url!);
+                                    }
+                                  },
                                 ),
                               ),
                             ],
-                          ),
-                          SizedBox(height: 6.h),
-                          LinearProgressIndicator(
-                            value: (_progressValue / 100),
-                            minHeight: 6.h,
-                          ),
-                        ],
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.w),
-                        color: CustomColors.appBar,
-                      ),
-                    )
-                  : Container(),
-              _isDownloading ? SizedBox(height: 20.h) : Container(),
-              MyBannerAd(
-                type: MyBannerType.medium,
-                adUnitId: AdHelper.homeScreenBannerAdUnitId,
-              ),
-              SizedBox(height: 20.h),
-            ],
-          ),
+                          )
+                        : _qualities == null
+                            ? Text(
+                                "hmm, this link looks too complicated for me or either i don't supported it yet... Can you try another one?",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20,
+                                  color: CustomColors.white,
+                                ),
+                              )
+                            : Container()
+                    : Container(),
+            _isDownloading ? SizedBox(height: 20.h) : SizedBox(height: 10.h),
+            _isDownloading
+                ? Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.downloading,
+                                        color: CustomColors.primary),
+                                    SizedBox(width: 10.w),
+                                    Text(
+                                      "Downloading",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 18,
+                                        color: CustomColors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 6.h),
+                                Text(
+                                  _fileName.substring(1),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    color: CustomColors.white,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              "${_progressValue.toStringAsFixed(0)}%",
+                              style: GoogleFonts.poppins(
+                                fontSize: 24,
+                                color: CustomColors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 6.h),
+                        LinearProgressIndicator(
+                          value: (_progressValue / 100),
+                          minHeight: 6.h,
+                        ),
+                      ],
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.w),
+                      color: CustomColors.appBar,
+                    ),
+                  )
+                : Container(),
+            _isDownloading ? SizedBox(height: 20.h) : Container(),
+            MyBannerAd(
+              type: MyBannerType.medium,
+              adUnitId: AdHelper.homeScreenBannerAdUnitId,
+            ),
+            SizedBox(height: 20.h),
+          ],
         ),
       ),
     );
@@ -453,6 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           deleteOnError: true,
         ).then((_) async {
+          widget.onDownloadCompleted();
           _loadInterstitalAd(adUnitId: AdHelper.downloadInterstialAdUnitId);
           setState(() => _isDownloading = false);
           setState(() => _progressValue = 0.0);

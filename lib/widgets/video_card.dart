@@ -14,12 +14,15 @@ class VideoCard extends StatefulWidget {
   final String path;
   final VideoData data;
   final VoidCallback onVideoDeleted;
+  final ValueChanged onControllerInit, onControllerdisp;
 
   const VideoCard({
     Key? key,
     required this.path,
     required this.data,
     required this.onVideoDeleted,
+    required this.onControllerInit,
+    required this.onControllerdisp,
   }) : super(key: key);
 
   @override
@@ -27,8 +30,8 @@ class VideoCard extends StatefulWidget {
 }
 
 class _VideoCardState extends State<VideoCard> {
-  String? _timeago;
   VideoPlayerController? _controller;
+  String? _timeago;
 
   @override
   void initState() {
@@ -38,16 +41,19 @@ class _VideoCardState extends State<VideoCard> {
       ..setLooping(true)
       ..initialize().then((value) {
         setState(() {});
-        _controller!.play();
+
+        widget.onControllerInit(_controller);
       });
     var _date = (widget.data.title!.split("-"))[1].substring(0, 8);
     var _time = (widget.data.title!.split("-"))[1].substring(8);
     _timeago = timeago.format(DateTime.parse("${_date}T$_time"));
+
     super.initState();
   }
 
   @override
   void dispose() {
+    widget.onControllerdisp(_controller);
     _controller!.dispose();
     super.dispose();
   }

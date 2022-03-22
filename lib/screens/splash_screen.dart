@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hm_video_downloader/screens/home_screen.dart';
+import 'package:hm_video_downloader/app_screen.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const HomeScreen(),
+          builder: (_) => const AppScreen(),
         ),
       );
     });

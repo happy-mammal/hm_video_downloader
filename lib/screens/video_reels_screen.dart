@@ -2,22 +2,25 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hm_video_downloader/screens/downloads_screen.dart';
 import 'package:hm_video_downloader/utils/ad_helper.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
 import 'package:hm_video_downloader/widgets/my_banner_ad.dart';
 import 'package:hm_video_downloader/widgets/video_card.dart';
 
 class VideoReelsScreen extends StatefulWidget {
-  final List<FileSystemEntity> downloads;
   final List<VideoData> videoData;
+  final List<FileSystemEntity> downloads;
   final int initialIndex;
+  final ValueChanged onVideoDeleted, onControllerInit, onControllerDisp;
 
   const VideoReelsScreen({
     Key? key,
-    required this.downloads,
-    required this.videoData,
     required this.initialIndex,
+    required this.videoData,
+    required this.downloads,
+    required this.onVideoDeleted,
+    required this.onControllerInit,
+    required this.onControllerDisp,
   }) : super(key: key);
 
   @override
@@ -30,6 +33,7 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
   @override
   void initState() {
     _pageController = PageController(initialPage: widget.initialIndex);
+    _pageController.jumpToPage(widget.initialIndex);
     super.initState();
   }
 
@@ -64,12 +68,7 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
           debugPrint(e.toString());
         }
         Navigator.of(context, rootNavigator: true).pop('dialog');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const DownloadsScreen(),
-          ),
-        );
+        widget.onVideoDeleted;
       },
     );
 
@@ -107,59 +106,35 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const DownloadsScreen(),
-          ),
-        );
-        return true;
-      },
-      child: Scaffold(
-        backgroundColor: CustomColors.backGround,
-        appBar: AppBar(
-          backgroundColor: CustomColors.appBar,
-          iconTheme: IconThemeData(color: CustomColors.primary),
-          elevation: 0,
-          title: Text(
-            "Watch Videos",
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              color: CustomColors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+    return Column(
+      children: [
+        MyBannerAd(
+          type: MyBannerType.full,
+          adUnitId: AdHelper.videosScreenBannerAdUnitId,
         ),
-        body: Column(
-          children: [
-            MyBannerAd(
-              type: MyBannerType.full,
-              adUnitId: AdHelper.videosScreenBannerAdUnitId,
-            ),
-            Expanded(
-              child: PageView(
-                allowImplicitScrolling: false,
-                controller: _pageController,
-                scrollDirection: Axis.vertical,
-                children: List.generate(
-                  widget.downloads.length,
-                  (index) {
-                    return VideoCard(
-                      path: widget.downloads[index].path,
-                      data: widget.videoData[index],
-                      onVideoDeleted: () {
-                        _showAlertDialog(context, index);
-                      },
-                    );
+        Expanded(
+          child: PageView(
+            controller: _pageController,
+            scrollDirection: Axis.vertical,
+            children: List.generate(
+              widget.downloads.length,
+              (index) {
+                return VideoCard(
+                  path: widget.downloads[index].path,
+                  data: widget.videoData[index],
+                  onVideoDeleted: () {
+                    _showAlertDialog(context, index);
                   },
-                ),
-              ),
+                  onControllerInit: (controller) {
+                    widget.onControllerInit(controller);
+                  },
+                  onControllerdisp: (controller) {},
+                );
+              },
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
