@@ -24,11 +24,11 @@ class _AppScreenState extends State<AppScreen> {
   final PageController _pageController = PageController();
   final FileManagerController controller = FileManagerController();
   VideoPlayerController? _currentVideoController;
+  PageController? _reelsPageController;
   List<VideoData> _videoData = [];
   List<FileSystemEntity> _downloads = [];
 
   int _selectedIndex = 0;
-  int _videoReelIndex = 0;
 
   bool? _isControllerDisposed;
 
@@ -100,7 +100,7 @@ class _AppScreenState extends State<AppScreen> {
             onVideoDeleted: () => _getDownloads(),
             onCardTap: (index) {
               setState(() {
-                _videoReelIndex = index;
+                _reelsPageController!.jumpToPage(index);
                 _selectedIndex = 2;
               });
               if (_isControllerDisposed != null && !_isControllerDisposed!) {
@@ -110,7 +110,6 @@ class _AppScreenState extends State<AppScreen> {
             },
           ),
           VideoReelsScreen(
-            initialIndex: _videoReelIndex,
             downloads: _downloads,
             videoData: _videoData,
             onVideoDeleted: (value) => _getDownloads(),
@@ -119,11 +118,17 @@ class _AppScreenState extends State<AppScreen> {
                 _currentVideoController = controller;
                 _isControllerDisposed = false;
               });
+              if (_selectedIndex == 2 && _currentVideoController != null) {
+                _currentVideoController!.play();
+              }
             },
             onControllerDisp: (controller) {
               setState(() {
                 _isControllerDisposed = true;
               });
+            },
+            onPageViewInit: (controller) {
+              _reelsPageController = controller;
             },
           ),
           const AboutUsScreen(),

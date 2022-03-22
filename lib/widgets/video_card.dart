@@ -53,8 +53,10 @@ class _VideoCardState extends State<VideoCard> {
 
   @override
   void dispose() {
-    widget.onControllerdisp(_controller);
-    _controller!.dispose();
+    if (!mounted) {
+      widget.onControllerdisp(_controller);
+      _controller!.dispose();
+    }
     super.dispose();
   }
 

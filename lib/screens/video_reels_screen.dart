@@ -10,17 +10,19 @@ import 'package:hm_video_downloader/widgets/video_card.dart';
 class VideoReelsScreen extends StatefulWidget {
   final List<VideoData> videoData;
   final List<FileSystemEntity> downloads;
-  final int initialIndex;
-  final ValueChanged onVideoDeleted, onControllerInit, onControllerDisp;
+  final ValueChanged onVideoDeleted,
+      onControllerInit,
+      onControllerDisp,
+      onPageViewInit;
 
   const VideoReelsScreen({
     Key? key,
-    required this.initialIndex,
     required this.videoData,
     required this.downloads,
     required this.onVideoDeleted,
     required this.onControllerInit,
     required this.onControllerDisp,
+    required this.onPageViewInit,
   }) : super(key: key);
 
   @override
@@ -32,8 +34,8 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
 
   @override
   void initState() {
-    _pageController = PageController(initialPage: widget.initialIndex);
-    _pageController.jumpToPage(widget.initialIndex);
+    _pageController = PageController(initialPage: 0);
+    widget.onPageViewInit(_pageController);
     super.initState();
   }
 
@@ -109,9 +111,8 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
     return Column(
       children: [
         MyBannerAd(
-          type: MyBannerType.full,
-          adUnitId: AdHelper.videosScreenBannerAdUnitId,
-        ),
+            type: MyBannerType.full,
+            adUnitId: AdHelper.videosScreenBannerAdUnitId),
         Expanded(
           child: PageView(
             controller: _pageController,
@@ -128,7 +129,9 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
                   onControllerInit: (controller) {
                     widget.onControllerInit(controller);
                   },
-                  onControllerdisp: (controller) {},
+                  onControllerdisp: (controller) {
+                    widget.onControllerDisp(controller);
+                  },
                 );
               },
             ),
