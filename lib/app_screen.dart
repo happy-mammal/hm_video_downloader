@@ -31,6 +31,7 @@ class _AppScreenState extends State<AppScreen> {
   int _selectedIndex = 0;
 
   bool? _isControllerDisposed;
+  bool? _isPageViewDisposed;
 
   @override
   void initState() {
@@ -74,19 +75,21 @@ class _AppScreenState extends State<AppScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.backGround,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: CustomColors.backGround,
-        elevation: 0,
-        title: Text(
-          "HM Video Downloader",
-          style: GoogleFonts.poppins(
-            fontSize: 26,
-            color: CustomColors.white,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
+      appBar: (_selectedIndex == 2 && _downloads.isNotEmpty)
+          ? null
+          : AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: CustomColors.backGround,
+              elevation: 0,
+              title: Text(
+                "HM Video Downloader",
+                style: GoogleFonts.poppins(
+                  fontSize: 26,
+                  color: CustomColors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
@@ -99,8 +102,12 @@ class _AppScreenState extends State<AppScreen> {
             videoData: _videoData,
             onVideoDeleted: () => _getDownloads(),
             onCardTap: (index) {
+              if (_isPageViewDisposed != null && !_isPageViewDisposed!) {
+                if (_reelsPageController != null) {
+                  _reelsPageController!.jumpToPage(index);
+                }
+              }
               setState(() {
-                _reelsPageController!.jumpToPage(index);
                 _selectedIndex = 2;
               });
               if (_isControllerDisposed != null && !_isControllerDisposed!) {
@@ -129,6 +136,12 @@ class _AppScreenState extends State<AppScreen> {
             },
             onPageViewInit: (controller) {
               _reelsPageController = controller;
+              _isPageViewDisposed = false;
+            },
+            onPageViewDisp: (value) {
+              setState(() {
+                _isPageViewDisposed = true;
+              });
             },
           ),
           const AboutUsScreen(),
