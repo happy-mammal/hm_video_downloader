@@ -5,8 +5,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:storage_space/storage_space.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutUsScreen extends StatefulWidget {
   const AboutUsScreen({Key? key}) : super(key: key);
@@ -16,6 +20,7 @@ class AboutUsScreen extends StatefulWidget {
 }
 
 class _AboutUsScreenState extends State<AboutUsScreen> {
+  final InAppReview inAppReview = InAppReview.instance;
   double _consumed = 0.0;
   String _fs1 = "";
   String _fs2 = "";
@@ -53,6 +58,10 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
     });
   }
 
+  _launchURL(String _url) async {
+    if (!await launch(_url)) throw 'Could not launch $_url';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,56 +82,60 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 ),
               ),
               SizedBox(height: 5.h),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.person_rounded,
-                          color: CustomColors.primary,
-                          size: 30.w,
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          "Happy Mammal",
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                            fontWeight: FontWeight.w400,
+              InkWell(
+                onTap: () => LaunchReview.launch(),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.person_rounded,
+                            color: CustomColors.primary,
+                            size: 30.w,
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.open_in_new_rounded,
-                          color: CustomColors.primary,
-                          size: 30.w,
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          "Check out other apps",
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                            fontWeight: FontWeight.w400,
+                          SizedBox(width: 10.w),
+                          Text(
+                            "Happy Mammal",
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              color: CustomColors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.w),
-                  color: CustomColors.appBar,
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.open_in_new_rounded,
+                            color: CustomColors.primary,
+                            size: 30.w,
+                          ),
+                          SizedBox(width: 10.w),
+                          Text(
+                            "Check out other apps",
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              color: CustomColors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.w),
+                    color: CustomColors.appBar,
+                  ),
                 ),
               ),
               SizedBox(height: 20.h),
@@ -135,54 +148,59 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 ),
               ),
               SizedBox(height: 5.h),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.update_rounded,
-                          color: CustomColors.primary,
-                          size: 30.w,
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          "Version 1.0",
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                            fontWeight: FontWeight.w400,
+              InkWell(
+                onTap: () => _launchURL(
+                    "https://pages.flycricket.io/hm-video-downloader/privacy.html"),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.update_rounded,
+                            color: CustomColors.primary,
+                            size: 30.w,
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10.h),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.policy_rounded,
-                          color: CustomColors.primary,
-                          size: 30.w,
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          "Privacy Policy",
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                            fontWeight: FontWeight.w400,
+                          SizedBox(width: 10.w),
+                          Text(
+                            "Version 1.0",
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              color: CustomColors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.w),
-                  color: CustomColors.appBar,
+                        ],
+                      ),
+                      SizedBox(height: 10.h),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.policy_rounded,
+                            color: CustomColors.primary,
+                            size: 30.w,
+                          ),
+                          SizedBox(width: 10.w),
+                          Text(
+                            "Privacy Policy",
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              color: CustomColors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.w),
+                    color: CustomColors.appBar,
+                  ),
                 ),
               ),
               SizedBox(height: 20.h),
@@ -201,42 +219,56 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.rate_review_rounded,
-                          color: CustomColors.primary,
-                          size: 30.w,
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          "Rate & Review Us",
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                            fontWeight: FontWeight.w400,
+                    InkWell(
+                      onTap: () async {
+                        if (await inAppReview.isAvailable()) {
+                          inAppReview.requestReview();
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.rate_review_rounded,
+                            color: CustomColors.primary,
+                            size: 30.w,
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 10.w),
+                          Text(
+                            "Rate & Review Us",
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              color: CustomColors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 10.h),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.ios_share_rounded,
-                          color: CustomColors.primary,
-                          size: 30.w,
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          "Share with your friends",
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                            fontWeight: FontWeight.w400,
+                    InkWell(
+                      onTap: () {
+                        Share.share(
+                            "HM Video Downloader (Multiuse)\n\nFast and secure video downloading app. Download videos from multiple sources.\n\nhttps://play.google.com/store/apps/details?id=com.happymammal.hmvideodownloader",
+                            subject: "HM Video Downloader (Multiuse)");
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.ios_share_rounded,
+                            color: CustomColors.primary,
+                            size: 30.w,
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 10.w),
+                          Text(
+                            "Share with your friends",
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              color: CustomColors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

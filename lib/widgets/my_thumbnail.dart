@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_sizes/file_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
@@ -88,7 +89,7 @@ class _MyThumbnailState extends State<MyThumbnail> {
                 ),
                 SizedBox(height: 5.h),
                 Text(
-                  " ${((widget.data.filesize as int) * 0.00000095367432).toStringAsFixed(2)} MB",
+                  FileSize.getSize((widget.data.filesize as int)),
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     color: CustomColors.white,

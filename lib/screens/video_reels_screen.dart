@@ -75,6 +75,7 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
         ),
       ),
       onPressed: () async {
+        widget.onVideoDeleted("");
         try {
           final file = File(widget.downloads[index].path);
           await file.delete();
@@ -82,7 +83,6 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
           debugPrint(e.toString());
         }
         Navigator.of(context, rootNavigator: true).pop('dialog');
-        widget.onVideoDeleted;
       },
     );
 
