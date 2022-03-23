@@ -3,29 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hm_video_downloader/utils/ad_helper.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
-import 'package:hm_video_downloader/widgets/my_banner_ad.dart';
 import 'package:hm_video_downloader/widgets/video_card.dart';
 
 class VideoReelsScreen extends StatefulWidget {
   final List<VideoData> videoData;
   final List<FileSystemEntity> downloads;
-  final ValueChanged onVideoDeleted,
-      onControllerInit,
-      onControllerDisp,
-      onPageViewInit,
-      onPageViewDisp;
+  final ValueChanged onVideoDeleted;
 
   const VideoReelsScreen({
     Key? key,
     required this.videoData,
     required this.downloads,
     required this.onVideoDeleted,
-    required this.onControllerInit,
-    required this.onControllerDisp,
-    required this.onPageViewInit,
-    required this.onPageViewDisp,
   }) : super(key: key);
 
   @override
@@ -38,16 +28,13 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
   @override
   void initState() {
     _pageController = PageController(initialPage: 0);
-    widget.onPageViewInit(_pageController);
+
     super.initState();
   }
 
   @override
   void dispose() {
-    if (!mounted) {
-      widget.onPageViewDisp(_pageController);
-      _pageController.dispose();
-    }
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -120,65 +107,50 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          MyBannerAd(
-              type: MyBannerType.full,
-              adUnitId: AdHelper.videosScreenBannerAdUnitId),
-          widget.downloads.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(10.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline_rounded,
-                          size: 50.w,
-                          color: CustomColors.primary,
-                        ),
-                        SizedBox(height: 10.h),
-                        Text(
-                          "Hmmm.... it seems like you have no downloaded videos. Please download some videos and come back later.",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
+    return widget.downloads.isEmpty
+        ? Center(
+            child: Padding(
+              padding: EdgeInsets.all(10.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline_rounded,
+                    size: 50.w,
+                    color: CustomColors.primary,
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    "Hmmm.... it seems like you have no downloaded videos. Please download some videos and come back later.",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      color: CustomColors.white,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                )
-              : Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    scrollDirection: Axis.vertical,
-                    children: List.generate(
-                      widget.downloads.length,
-                      (index) {
-                        return VideoCard(
-                          path: widget.downloads[index].path,
-                          data: widget.videoData[index],
-                          onVideoDeleted: () {
-                            _showAlertDialog(context, index);
-                          },
-                          onControllerInit: (controller) {
-                            widget.onControllerInit(controller);
-                          },
-                          onControllerDisp: (controller) {
-                            widget.onControllerDisp(controller);
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                )
-        ],
-      ),
-    );
+                ],
+              ),
+            ),
+          )
+        : Expanded(
+            child: PageView(
+              controller: _pageController,
+              scrollDirection: Axis.vertical,
+              children: List.generate(
+                widget.downloads.length,
+                (index) {
+                  return VideoCard(
+                    path: widget.downloads[index].path,
+                    data: widget.videoData[index],
+                    onVideoDeleted: () {
+                      _showAlertDialog(context, index);
+                    },
+                  );
+                },
+              ),
+            ),
+          );
   }
 }

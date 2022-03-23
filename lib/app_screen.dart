@@ -10,7 +10,6 @@ import 'package:hm_video_downloader/screens/home_screen.dart';
 import 'package:hm_video_downloader/screens/video_reels_screen.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_player/video_player.dart';
 import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
 
 class AppScreen extends StatefulWidget {
@@ -23,15 +22,10 @@ class AppScreen extends StatefulWidget {
 class _AppScreenState extends State<AppScreen> {
   final PageController _pageController = PageController();
   final FileManagerController controller = FileManagerController();
-  VideoPlayerController? _currentVideoController;
-  PageController? _reelsPageController;
   List<VideoData> _videoData = [];
   List<FileSystemEntity> _downloads = [];
 
   int _selectedIndex = 0;
-
-  bool? _isControllerDisposed;
-  bool? _isPageViewDisposed;
 
   @override
   void initState() {
@@ -41,9 +35,6 @@ class _AppScreenState extends State<AppScreen> {
 
   Future<void> _getDownloads() async {
     setState(() {
-      _isControllerDisposed = true;
-      _currentVideoController = null;
-
       _downloads = [];
       _videoData = [];
     });
@@ -63,33 +54,25 @@ class _AppScreenState extends State<AppScreen> {
       }
     }
     setState(() => _downloads = _data);
-
-    if (_isControllerDisposed != null && !_isControllerDisposed!) {
-      if (_currentVideoController != null) {
-        _currentVideoController!.pause();
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.backGround,
-      appBar: (_selectedIndex == 2 && _downloads.isNotEmpty)
-          ? null
-          : AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: CustomColors.backGround,
-              elevation: 0,
-              title: Text(
-                "HM Video Downloader",
-                style: GoogleFonts.poppins(
-                  fontSize: 26,
-                  color: CustomColors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: CustomColors.backGround,
+        elevation: 0,
+        title: Text(
+          "HM Video Downloader",
+          style: GoogleFonts.poppins(
+            fontSize: 26,
+            color: CustomColors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
@@ -102,17 +85,10 @@ class _AppScreenState extends State<AppScreen> {
             videoData: _videoData,
             onVideoDeleted: () => _getDownloads(),
             onCardTap: (index) {
-              if (_isPageViewDisposed != null && !_isPageViewDisposed!) {
-                if (_reelsPageController != null) {
-                  _reelsPageController!.jumpToPage(index);
-                }
-              }
               setState(() {
                 _selectedIndex = 2;
               });
-              if (_isControllerDisposed != null && !_isControllerDisposed!) {
-                _currentVideoController!.play();
-              }
+
               _pageController.jumpToPage(_selectedIndex);
             },
           ),
@@ -120,36 +96,10 @@ class _AppScreenState extends State<AppScreen> {
             downloads: _downloads,
             videoData: _videoData,
             onVideoDeleted: (value) {
-              _currentVideoController!.pause();
-              _currentVideoController!.dispose();
-
               setState(() {});
               _selectedIndex = 1;
               _pageController.jumpToPage(1);
               _getDownloads();
-            },
-            onControllerInit: (controller) {
-              setState(() {
-                _currentVideoController = controller;
-                _isControllerDisposed = false;
-              });
-              if (_selectedIndex == 2 && _currentVideoController != null) {
-                _currentVideoController!.play();
-              }
-            },
-            onControllerDisp: (controller) {
-              setState(() {
-                _isControllerDisposed = true;
-              });
-            },
-            onPageViewInit: (controller) {
-              _reelsPageController = controller;
-              _isPageViewDisposed = false;
-            },
-            onPageViewDisp: (value) {
-              setState(() {
-                _isPageViewDisposed = true;
-              });
             },
           ),
           const AboutUsScreen(),
@@ -163,13 +113,7 @@ class _AppScreenState extends State<AppScreen> {
         iconSize: 28.w,
         onItemSelected: (index) {
           setState(() => _selectedIndex = index);
-          if (_isControllerDisposed != null && !_isControllerDisposed!) {
-            if (_selectedIndex != 2 && _currentVideoController != null) {
-              _currentVideoController!.pause();
-            } else if (_selectedIndex == 2 && _currentVideoController != null) {
-              _currentVideoController!.play();
-            }
-          }
+
           _pageController.jumpToPage(_selectedIndex);
         },
         selectedIndex: _selectedIndex,

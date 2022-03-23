@@ -134,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           bool _hasString = await Clipboard.hasStrings();
                           if (_hasString) {
                             _controller.text = value!.text!;
+
                             if (value.text!.isEmpty ||
                                 _controller.text.isEmpty) {
                               _showSnackBar("Please Enter Video URL");

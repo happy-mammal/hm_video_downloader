@@ -14,15 +14,12 @@ class VideoCard extends StatefulWidget {
   final String path;
   final VideoData data;
   final VoidCallback onVideoDeleted;
-  final ValueChanged onControllerInit, onControllerDisp;
 
   const VideoCard({
     Key? key,
     required this.path,
     required this.data,
     required this.onVideoDeleted,
-    required this.onControllerInit,
-    required this.onControllerDisp,
   }) : super(key: key);
 
   @override
@@ -42,7 +39,7 @@ class _VideoCardState extends State<VideoCard> {
       ..initialize().then((value) {
         setState(() {});
 
-        widget.onControllerInit(_controller);
+        _controller!.play();
       });
     var _date = (widget.data.title!.split("-"))[1].substring(0, 8);
     var _time = (widget.data.title!.split("-"))[1].substring(8);
@@ -53,10 +50,7 @@ class _VideoCardState extends State<VideoCard> {
 
   @override
   void dispose() {
-    if (!mounted) {
-      widget.onControllerDisp(_controller);
-      _controller!.dispose();
-    }
+    _controller!.dispose();
     super.dispose();
   }
 
