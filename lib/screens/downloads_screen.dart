@@ -96,39 +96,64 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: ListView.separated(
-        itemCount: widget.downloads.length,
-        padding: EdgeInsets.symmetric(vertical: 5.h),
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () => widget.onCardTap(index),
-            child: MyThumbnail(
-              path: widget.downloads[index].path,
-              data: widget.videoData[index],
-              onVideoDeleted: () {
-                _showAlertDialog(context, index);
+    return widget.downloads.isEmpty
+        ? Padding(
+            padding: EdgeInsets.all(10.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline_rounded,
+                  size: 50.w,
+                  color: CustomColors.primary,
+                ),
+                SizedBox(height: 10.h),
+                Text(
+                  "Hmmm.... it seems like you have no downloaded videos. Please download some videos and come back later.",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    color: CustomColors.white,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: ListView.separated(
+              itemCount: widget.downloads.length,
+              padding: EdgeInsets.symmetric(vertical: 5.h),
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () => widget.onCardTap(index),
+                  child: MyThumbnail(
+                    path: widget.downloads[index].path,
+                    data: widget.videoData[index],
+                    onVideoDeleted: () {
+                      _showAlertDialog(context, index);
+                    },
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) {
+                if (index % 2 == 0) {
+                  return MyBannerAd(
+                    type: MyBannerType.full,
+                    adUnitId: AdHelper.downloadsScreenBannerAdUnitId,
+                  );
+                } else {
+                  return Divider(
+                    height: 0,
+                    thickness: 5.h,
+                    color: CustomColors.backGround,
+                  );
+                }
               },
             ),
           );
-        },
-        separatorBuilder: (context, index) {
-          if (index % 2 == 0) {
-            return MyBannerAd(
-              type: MyBannerType.full,
-              adUnitId: AdHelper.downloadsScreenBannerAdUnitId,
-            );
-          } else {
-            return Divider(
-              height: 0,
-              thickness: 5.h,
-              color: CustomColors.backGround,
-            );
-          }
-        },
-      ),
-    );
   }
 }

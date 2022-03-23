@@ -20,14 +20,17 @@ dependencies:
   google_fonts: ^2.3.1
   google_mobile_ads: ^1.1.0
   http: ^0.13.4
+  in_app_review: ^2.0.4
   insta_extractor: ^0.0.5
   intl: ^0.17.0
+  launch_review: ^3.0.1
   path_provider: ^2.0.9
   permission_handler: ^9.2.0
   persistent_bottom_nav_bar: ^4.0.2
   share_plus: ^3.1.0
   storage_space: ^1.0.1+5
   timeago: ^3.2.2
+  url_launcher: ^6.0.20
   video_player: ^2.3.0
   water_drop_nav_bar: ^2.1.0+8
 
