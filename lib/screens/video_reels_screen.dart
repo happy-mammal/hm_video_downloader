@@ -5,11 +5,12 @@ import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
 import 'package:hm_video_downloader/widgets/video_card.dart';
+import 'package:video_player/video_player.dart';
 
 class VideoReelsScreen extends StatefulWidget {
   final List<VideoData> videoData;
   final List<FileSystemEntity> downloads;
-  final ValueChanged onVideoDeleted;
+  final VoidCallback onVideoDeleted;
 
   const VideoReelsScreen({
     Key? key,
@@ -32,13 +33,8 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  _showAlertDialog(BuildContext context, int index) {
+  _showAlertDialog(
+      BuildContext context, int index, VideoPlayerController controller) {
     Widget cancelButton = TextButton(
       child: Text(
         "Cancel",
@@ -49,6 +45,7 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
         ),
       ),
       onPressed: () {
+        controller.play();
         Navigator.of(context, rootNavigator: true).pop('dialog');
       },
     );
@@ -62,7 +59,6 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
         ),
       ),
       onPressed: () async {
-        widget.onVideoDeleted("");
         try {
           final file = File(widget.downloads[index].path);
           await file.delete();
@@ -70,6 +66,7 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
           debugPrint(e.toString());
         }
         Navigator.of(context, rootNavigator: true).pop('dialog');
+        widget.onVideoDeleted();
       },
     );
 
@@ -134,22 +131,20 @@ class _VideoReelsScreenState extends State<VideoReelsScreen> {
               ),
             ),
           )
-        : Expanded(
-            child: PageView(
-              controller: _pageController,
-              scrollDirection: Axis.vertical,
-              children: List.generate(
-                widget.downloads.length,
-                (index) {
-                  return VideoCard(
-                    path: widget.downloads[index].path,
-                    data: widget.videoData[index],
-                    onVideoDeleted: () {
-                      _showAlertDialog(context, index);
-                    },
-                  );
-                },
-              ),
+        : PageView(
+            controller: _pageController,
+            scrollDirection: Axis.vertical,
+            children: List.generate(
+              widget.downloads.length,
+              (index) {
+                return VideoCard(
+                  path: widget.downloads[index].path,
+                  data: widget.videoData[index],
+                  onVideoDeleted: (controller) {
+                    _showAlertDialog(context, index, controller);
+                  },
+                );
+              },
             ),
           );
   }

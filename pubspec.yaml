@@ -24,6 +24,7 @@ dependencies:
   insta_extractor: ^0.0.5
   intl: ^0.17.0
   launch_review: ^3.0.1
+  modal_bottom_sheet: ^2.0.1
   path_provider: ^2.0.9
   permission_handler: ^9.2.0
   persistent_bottom_nav_bar: ^4.0.2

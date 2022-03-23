@@ -95,10 +95,11 @@ class _AppScreenState extends State<AppScreen> {
           VideoReelsScreen(
             downloads: _downloads,
             videoData: _videoData,
-            onVideoDeleted: (value) {
-              setState(() {});
-              _selectedIndex = 1;
-              _pageController.jumpToPage(1);
+            onVideoDeleted: () {
+              setState(() {
+                _selectedIndex = 1;
+              });
+              _pageController.jumpToPage(_selectedIndex);
               _getDownloads();
             },
           ),

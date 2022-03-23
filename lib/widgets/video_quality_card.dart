@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hm_video_downloader/models/video_quality_model.dart';
 import 'package:hm_video_downloader/repositories/video_downloader_repository.dart';
@@ -10,11 +10,13 @@ class VideoQualityCard extends StatefulWidget {
   final VideoQualityModel model;
   final VoidCallback onTap;
   final VideoType type;
+  final bool isSelected;
   const VideoQualityCard({
     Key? key,
     required this.model,
     required this.onTap,
     required this.type,
+    required this.isSelected,
   }) : super(key: key);
 
   @override
@@ -73,70 +75,42 @@ class _VideoQualityCardState extends State<VideoQualityCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.w),
-        color: CustomColors.appBar,
-      ),
-      margin: EdgeInsets.symmetric(vertical: 10.h),
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-      child: InkWell(
-        onTap: widget.onTap,
-        borderRadius: BorderRadius.circular(10.w),
+    return InkWell(
+      onTap: widget.onTap,
+      borderRadius: BorderRadius.circular(10.w),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.w),
+          border: Border.all(width: 1, color: CustomColors.primary),
+        ),
+        margin: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 50.w,
-                  height: 50.h,
-                  alignment: Alignment.center,
-                  child: Icon(
-                    FontAwesome.file_video,
+            widget.isSelected
+                ? Icon(
+                    FontAwesome5.check_circle,
                     color: CustomColors.primary,
-                    size: 30.w,
+                    size: 20.w,
+                  )
+                : Icon(
+                    _qualityValue! < 720 ? Icons.sd : Icons.hd_rounded,
+                    color: CustomColors.primary,
+                    size: 28.w,
                   ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.w),
-                    color: CustomColors.backGround,
-                  ),
-                ),
-                SizedBox(width: 10.w),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Video Quality",
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        color: CustomColors.white,
-                      ),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.type == VideoType.youtube
-                              ? "${_qualityValue}p"
-                              : _quality!,
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            color: CustomColors.white,
-                          ),
-                        ),
-                        SizedBox(width: 10.w),
-                        Icon(
-                          _qualityValue! < 720 ? Icons.sd : Icons.hd_rounded,
-                          color: CustomColors.primary,
-                          size: 28.w,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+            SizedBox(width: 5.w),
+            Text(
+              widget.type == VideoType.youtube
+                  ? "${_qualityValue}P"
+                  : "${_quality!}P",
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                color: CustomColors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+            SizedBox(width: 5.w),
           ],
         ),
       ),

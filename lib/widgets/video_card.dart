@@ -13,7 +13,7 @@ import 'package:video_player/video_player.dart';
 class VideoCard extends StatefulWidget {
   final String path;
   final VideoData data;
-  final VoidCallback onVideoDeleted;
+  final ValueChanged onVideoDeleted;
 
   const VideoCard({
     Key? key,
@@ -190,7 +190,10 @@ class _VideoCardState extends State<VideoCard> {
                   ),
                   SizedBox(height: 20.h),
                   IconButton(
-                    onPressed: () => widget.onVideoDeleted(),
+                    onPressed: () {
+                      _controller!.pause();
+                      widget.onVideoDeleted(_controller);
+                    },
                     icon: Icon(
                       FontAwesome5.trash,
                       color: CustomColors.white,

@@ -14,6 +14,7 @@ import 'package:hm_video_downloader/utils/custom_colors.dart';
 import 'package:hm_video_downloader/widgets/my_banner_ad.dart';
 import 'package:hm_video_downloader/widgets/video_quality_card.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -41,6 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _isLoading = false;
 
+  bool _isSearching = false;
+
+  int _selectedQualityIndex = 0;
+
   String _fileName = "";
 
   late InterstitialAd _interstitialAd;
@@ -50,31 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
   VideoType _videoType = VideoType.none;
 
   @override
-  void dispose() {
-    super.dispose();
-    _interstitialAd.dispose();
-  }
-
-  _loadInterstitalAd({required String adUnitId}) {
-    InterstitialAd.load(
-      adUnitId: adUnitId,
-      request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: ((ad) {
-          setState(() => _interstitialAd = ad);
-          setState(() => _isInterstitialAdReady = true);
-        }),
-        onAdFailedToLoad: (error) {
-          setState(() => _isInterstitialAdReady = false);
-        },
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -120,28 +103,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_isDownloading) {
+                      if (_isSearching) {
+                        _showSnackBar(
+                            "Try again later! Searching in progress.");
+                      } else if (_isDownloading) {
                         _showSnackBar(
                             "Try again later! Downloading in progress.");
                       } else {
-                        setState(() => _isLoading = false);
-                        _controller.text = "";
-                        setState(() => _qualities = []);
-                        setState(() => _isLoading = true);
-
                         Clipboard.getData(Clipboard.kTextPlain)
                             .then((value) async {
                           bool _hasString = await Clipboard.hasStrings();
                           if (_hasString) {
-                            _controller.text = value!.text!;
-
-                            if (value.text!.isEmpty ||
-                                _controller.text.isEmpty) {
-                              _showSnackBar("Please Enter Video URL");
+                            if (_controller.text == value!.text) {
+                              _showBottomModal();
                             } else {
-                              _setVideoType(value.text!);
+                              setState(() {
+                                _isLoading = false;
+                                _qualities = [];
+                                _video = null;
+                                _isLoading = true;
+                              });
+                              _controller.text = "";
+                              _controller.text = value.text!;
 
-                              await _onLinkPasted(value.text!);
+                              if (value.text!.isEmpty ||
+                                  _controller.text.isEmpty) {
+                                _showSnackBar("Please Enter Video URL");
+                              } else {
+                                _setVideoType(value.text!);
+                                setState(() => _isSearching = true);
+                                await _onLinkPasted(value.text!);
+                              }
                             }
                           } else {
                             _showSnackBar(
@@ -185,9 +177,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         _showSnackBar(
                             "Try again later! Downloading in progress.");
                       } else {
-                        setState(() => _isLoading = false);
+                        setState(() {
+                          _isLoading = false;
+                          _qualities = [];
+                          _video = null;
+                        });
                         _controller.text = "";
-                        setState(() => _qualities = []);
                       }
                     },
                     child: Center(
@@ -217,46 +212,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            _isLoading ? SizedBox(height: 20.h) : SizedBox(height: 10.h),
+            SizedBox(height: 20.h),
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : !_isDownloading
                     ? (_qualities != null && _qualities!.isNotEmpty)
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Select Video Quality",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20,
-                                  color: CustomColors.white,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 5.h,
-                              ),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                primary: false,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: _qualities!.length,
-                                itemBuilder: (context, index) =>
-                                    VideoQualityCard(
-                                  model: _qualities![index],
-                                  type: _videoType,
-                                  onTap: () async {
-                                    if (_isDownloading) {
-                                      _showSnackBar(
-                                          "Try again later! Downloading in progress.");
-                                    } else {
-                                      await _performDownloading(
-                                          _qualities![index].url!);
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          )
+                        ? Container()
                         : _qualities == null
                             ? Text(
                                 "hmm, this link looks too complicated for me or either i don't supported it yet... Can you try another one?",
@@ -343,6 +304,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _interstitialAd.dispose();
+  }
+
+  void _loadInterstitalAd({required String adUnitId}) {
+    InterstitialAd.load(
+      adUnitId: adUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: ((ad) {
+          setState(() => _interstitialAd = ad);
+          setState(() => _isInterstitialAdReady = true);
+        }),
+        onAdFailedToLoad: (error) {
+          setState(() => _isInterstitialAdReady = false);
+        },
+      ),
+    );
+  }
+
   IconData? get _getBrandIcon {
     switch (_videoType) {
       case VideoType.facebook:
@@ -353,6 +336,35 @@ class _HomeScreenState extends State<HomeScreen> {
         return FontAwesome.youtube_play;
       default:
         return null;
+    }
+  }
+
+  String? get _getFilePrefix {
+    switch (_videoType) {
+      case VideoType.facebook:
+        return "Facebook";
+      case VideoType.twitter:
+        return "Twitter";
+      case VideoType.youtube:
+        return "YouTube";
+      default:
+        return null;
+    }
+  }
+
+  void _setVideoType(String url) {
+    if (url.isEmpty) {
+      setState(() => _videoType = VideoType.none);
+    } else if (url.contains("facebook.com") || url.contains("fb.watch")) {
+      setState(() => _videoType = VideoType.facebook);
+    } else if (url.contains("youtube.com") || url.contains("youtu.be")) {
+      setState(() => _videoType = VideoType.youtube);
+    } else if (url.contains("twitter.com")) {
+      setState(() => _videoType = VideoType.twitter);
+    } else if (url.contains("instagram.com")) {
+      setState(() => _videoType = VideoType.instagram);
+    } else {
+      setState(() => _videoType = VideoType.none);
     }
   }
 
@@ -372,19 +384,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return await _repository.getAvailableYTVideos(url);
       case VideoType.instagram:
         return await _repository.getAvailableIGVideos(url);
-      default:
-        return null;
-    }
-  }
-
-  String? get _getFilePrefix {
-    switch (_videoType) {
-      case VideoType.facebook:
-        return "Facebook";
-      case VideoType.twitter:
-        return "Twitter";
-      case VideoType.youtube:
-        return "YouTube";
       default:
         return null;
     }
@@ -426,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _performDownloading(String url) async {
+  Future<void> _performDownloading(String url) async {
     if (_isInterstitialAdReady) {
       _interstitialAd.show();
     }
@@ -460,9 +459,12 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() => _isDownloading = false);
           setState(() => _progressValue = 0.0);
 
-          setState(() => _isLoading = false);
+          setState(() {
+            _isLoading = false;
+            _qualities = [];
+            _video = null;
+          });
           _controller.text = "";
-          setState(() => _qualities = []);
 
           _showSnackBar("Video downloaded succesfully.");
           await Future.delayed(const Duration(seconds: 1));
@@ -471,8 +473,11 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         });
       } on DioError catch (e) {
-        setState(() => _isDownloading = false);
-        setState(() => _qualities = []);
+        setState(() {
+          _isDownloading = false;
+          _qualities = [];
+          _video = null;
+        });
 
         _showSnackBar("Oops! ${e.message}");
       }
@@ -481,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  _onLinkPasted(String url) async {
+  Future<void> _onLinkPasted(String url) async {
     _loadInterstitalAd(adUnitId: AdHelper.downloadInterstialAdUnitId);
     var _response = await _getExtrationMethod(type: _videoType, url: url);
     setState(() => _video = _response);
@@ -489,25 +494,175 @@ class _HomeScreenState extends State<HomeScreen> {
       for (var _quality in _video!.videos!) {
         _qualities!.add(_quality);
       }
+      _showBottomModal();
     } else {
       _qualities = null;
     }
-    setState(() {});
+    setState(() => _isSearching = false);
   }
 
-  _setVideoType(String url) {
-    if (url.isEmpty) {
-      setState(() => _videoType = VideoType.none);
-    } else if (url.contains("facebook.com") || url.contains("fb.watch")) {
-      setState(() => _videoType = VideoType.facebook);
-    } else if (url.contains("youtube.com") || url.contains("youtu.be")) {
-      setState(() => _videoType = VideoType.youtube);
-    } else if (url.contains("twitter.com")) {
-      setState(() => _videoType = VideoType.twitter);
-    } else if (url.contains("instagram.com")) {
-      setState(() => _videoType = VideoType.instagram);
-    } else {
-      setState(() => _videoType = VideoType.none);
-    }
+  _showBottomModal() {
+    showMaterialModalBottomSheet(
+      context: context,
+      backgroundColor: CustomColors.appBar,
+      isDismissible: false,
+      enableDrag: false,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.w),
+          topRight: Radius.circular(15.w),
+        ),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 15.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Select Video Quality",
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          color: CustomColors.white,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: CustomColors.primary,
+                          size: 26.w,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5.h),
+                  Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.90,
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15.w),
+                        child: Image.network(
+                          _video!.thumbnail!,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  Row(
+                    children: [
+                      Icon(
+                        _getBrandIcon,
+                        color: CustomColors.primary,
+                        size: 26.w,
+                      ),
+                      SizedBox(width: 10.w),
+                      Text(
+                        "Downloading From ${_getFilePrefix!}",
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          color: CustomColors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5.h),
+                  Row(
+                    children: [
+                      Icon(
+                        FontAwesome.video,
+                        color: CustomColors.primary,
+                        size: 26.w,
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Text(
+                          _video!.title!,
+                          maxLines: 2,
+                          overflow: TextOverflow.fade,
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: CustomColors.white,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5.h),
+                  Wrap(
+                    children: List.generate(
+                      _qualities!.length,
+                      (index) => VideoQualityCard(
+                        isSelected: _selectedQualityIndex == index,
+                        model: _qualities![index],
+                        onTap: () async {
+                          setState(() => _selectedQualityIndex = index);
+                        },
+                        type: _videoType,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_isDownloading) {
+                        _showSnackBar(
+                            "Try again later! Downloading in progress.");
+                      } else {
+                        Navigator.pop(context);
+                        await _performDownloading(
+                          _qualities![_selectedQualityIndex].url!,
+                        );
+                      }
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: Text(
+                          "Download This Video",
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color: CustomColors.appBar,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(CustomColors.primary),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.w),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  MyBannerAd(
+                    type: MyBannerType.full,
+                    adUnitId: AdHelper.videosScreenBannerAdUnitId,
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
