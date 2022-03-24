@@ -40,6 +40,7 @@ class _MyThumbnailState extends State<MyThumbnail> {
       ..initialize().then((value) {
         setState(() {});
       });
+
     super.initState();
   }
 

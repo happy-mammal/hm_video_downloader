@@ -218,6 +218,8 @@ class _VideoCardState extends State<VideoCard> {
         return FontAwesome.twitter;
       case "YouTube":
         return FontAwesome.youtube_play;
+      case "Instagram":
+        return FontAwesome.instagram;
       default:
         return null;
     }

@@ -118,6 +118,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               _showBottomModal();
                             } else {
                               setState(() {
+                                _selectedQualityIndex = 0;
+                                _videoType = VideoType.none;
                                 _isLoading = false;
                                 _qualities = [];
                                 _video = null;
@@ -178,6 +180,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             "Try again later! Downloading in progress.");
                       } else {
                         setState(() {
+                          _selectedQualityIndex = 0;
+                          _videoType = VideoType.none;
                           _isLoading = false;
                           _qualities = [];
                           _video = null;
@@ -334,6 +338,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return FontAwesome.twitter;
       case VideoType.youtube:
         return FontAwesome.youtube_play;
+      case VideoType.instagram:
+        return FontAwesome.instagram;
       default:
         return null;
     }
@@ -347,6 +353,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return "Twitter";
       case VideoType.youtube:
         return "YouTube";
+      case VideoType.instagram:
+        return "Instagram";
       default:
         return null;
     }
@@ -392,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _showSnackBar(String title) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.w),
         ),
@@ -456,10 +464,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ).then((_) async {
           widget.onDownloadCompleted();
           _loadInterstitalAd(adUnitId: AdHelper.downloadInterstialAdUnitId);
-          setState(() => _isDownloading = false);
-          setState(() => _progressValue = 0.0);
 
           setState(() {
+            _isDownloading = false;
+            _progressValue = 0.0;
+            _videoType = VideoType.none;
             _isLoading = false;
             _qualities = [];
             _video = null;
@@ -474,6 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       } on DioError catch (e) {
         setState(() {
+          _videoType = VideoType.none;
           _isDownloading = false;
           _qualities = [];
           _video = null;
@@ -559,7 +569,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 5.h),
+                  SizedBox(height: 10.h),
                   Row(
                     children: [
                       Icon(
@@ -578,7 +588,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 5.h),
+                  SizedBox(height: 10.h),
                   Row(
                     children: [
                       Icon(
@@ -601,7 +611,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 5.h),
+                  SizedBox(height: 10.h),
                   Wrap(
                     children: List.generate(
                       _qualities!.length,
@@ -615,7 +625,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 5.h),
+                  SizedBox(height: 10.h),
                   ElevatedButton(
                     onPressed: () async {
                       if (_isDownloading) {

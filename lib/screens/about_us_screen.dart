@@ -54,7 +54,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
       _fs1 = FileSize.getGigaBytes(freeSpace.free);
       _fs2 = FileSize.getSize(_occupied);
 
-      _consumed = (_occupied * 100) / freeSpace.free;
+      _consumed = ((_occupied * 100) / freeSpace.free) / 100;
     });
   }
 
@@ -324,7 +324,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "$_fs2 used by app",
+                          "$_fs2 used",
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             color: CustomColors.white,
