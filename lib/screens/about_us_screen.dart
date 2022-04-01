@@ -167,7 +167,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                           ),
                           SizedBox(width: 10.w),
                           Text(
-                            "Version 1.0",
+                            "Version 1.1.0",
                             style: GoogleFonts.poppins(
                               fontSize: 20,
                               color: CustomColors.white,

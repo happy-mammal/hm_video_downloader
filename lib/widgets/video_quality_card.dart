@@ -101,9 +101,10 @@ class _VideoQualityCardState extends State<VideoQualityCard> {
                   ),
             SizedBox(width: 5.w),
             Text(
-              widget.type == VideoType.youtube
+              (widget.type == VideoType.youtube ||
+                      widget.type == VideoType.twitter)
                   ? "${_qualityValue}P"
-                  : "${_quality!}P",
+                  : _quality!,
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 color: CustomColors.white,

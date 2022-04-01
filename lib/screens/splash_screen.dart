@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hm_video_downloader/app_screen.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
+import 'package:in_app_update/in_app_update.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -12,16 +13,44 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  AppUpdateInfo? _updateInfo;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  Future<void> checkForUpdate() async {
+    InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        _updateInfo = info;
+      });
+    }).catchError((e) {
+      _showSnack(e.toString());
+    });
+  }
+
+  void _showSnack(String text) {
+    if (_scaffoldKey.currentContext != null) {
+      ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+          .showSnackBar(SnackBar(content: Text(text)));
+    }
+  }
+
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const AppScreen(),
-        ),
-      );
-    });
+    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
+      InAppUpdate.performImmediateUpdate().catchError((e) {
+        _showSnack(e.toString());
+      });
+    } else {
+      Future.delayed(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const AppScreen(),
+          ),
+        );
+      });
+    }
+
     super.initState();
   }
 

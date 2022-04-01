@@ -6,11 +6,9 @@ import 'package:hm_video_downloader/models/video_quality_model.dart';
 import 'package:insta_extractor/insta_extractor.dart';
 
 class VideoDownloaderRepository {
-  late VideoDownloaderAPI api;
-
-  VideoDownloaderRepository({required this.api}) {
-    api = VideoDownloaderAPI();
-  }
+  VideoDownloaderAPI api = VideoDownloaderAPI(
+    apiKey: "e280a2cbbcmsh2cdb4231e2c4f66p1abbecjsn94c0c8448e7d",
+  );
 
   Future<VideoDownloadModel?> getAvailableYTVideos(String url) async {
     try {

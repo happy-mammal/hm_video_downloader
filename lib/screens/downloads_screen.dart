@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hm_video_downloader/utils/ad_helper.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
-import 'package:hm_video_downloader/widgets/my_banner_ad.dart';
 import 'package:hm_video_downloader/widgets/my_thumbnail.dart';
 
 class DownloadsScreen extends StatefulWidget {
@@ -124,34 +122,21 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
         : SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            child: ListView.separated(
+            child: ListView.builder(
               itemCount: widget.downloads.length,
               padding: EdgeInsets.symmetric(vertical: 5.h),
               itemBuilder: (context, index) {
+                int _reverseIndex = widget.downloads.length - 1 - index;
                 return InkWell(
-                  onTap: () => widget.onCardTap(index),
+                  onTap: () => widget.onCardTap(_reverseIndex),
                   child: MyThumbnail(
-                    path: widget.downloads[index].path,
-                    data: widget.videoData[index],
+                    path: widget.downloads[_reverseIndex].path,
+                    data: widget.videoData[_reverseIndex],
                     onVideoDeleted: () {
-                      _showAlertDialog(context, index);
+                      _showAlertDialog(context, _reverseIndex);
                     },
                   ),
                 );
-              },
-              separatorBuilder: (context, index) {
-                if (index % 2 == 0) {
-                  return MyBannerAd(
-                    type: MyBannerType.full,
-                    adUnitId: AdHelper.downloadsScreenBannerAdUnitId,
-                  );
-                } else {
-                  return Divider(
-                    height: 0,
-                    thickness: 5.h,
-                    color: CustomColors.backGround,
-                  );
-                }
               },
             ),
           );

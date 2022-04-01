@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class VideoDownloaderAPI {
-  final String _apiKey = "e280a2cbbcmsh2cdb4231e2c4f66p1abbecjsn94c0c8448e7d";
+  late String _apiKey;
+  VideoDownloaderAPI({required String apiKey}) {
+    _apiKey = apiKey;
+  }
   final String _apiType = "application/json";
 
   final List<String> _hosts = const [

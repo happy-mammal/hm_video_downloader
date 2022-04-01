@@ -4,14 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:hm_video_downloader/data/video_downloader_api.dart';
 import 'package:hm_video_downloader/models/video_download_model.dart';
 import 'package:hm_video_downloader/models/video_quality_model.dart';
 import 'package:hm_video_downloader/repositories/video_downloader_repository.dart';
-import 'package:hm_video_downloader/utils/ad_helper.dart';
 import 'package:hm_video_downloader/utils/custom_colors.dart';
-import 'package:hm_video_downloader/widgets/my_banner_ad.dart';
 import 'package:hm_video_downloader/widgets/video_quality_card.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -47,10 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedQualityIndex = 0;
 
   String _fileName = "";
-
-  late InterstitialAd _interstitialAd;
-
-  bool _isInterstitialAdReady = false;
 
   VideoType _videoType = VideoType.none;
 
@@ -105,10 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () {
                       if (_isSearching) {
                         _showSnackBar(
-                            "Try again later! Searching in progress.");
+                            "Try again later! Searching in progress.", 2);
                       } else if (_isDownloading) {
                         _showSnackBar(
-                            "Try again later! Downloading in progress.");
+                            "Try again later! Downloading in progress.", 2);
                       } else {
                         Clipboard.getData(Clipboard.kTextPlain)
                             .then((value) async {
@@ -130,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               if (value.text!.isEmpty ||
                                   _controller.text.isEmpty) {
-                                _showSnackBar("Please Enter Video URL");
+                                _showSnackBar("Please Enter Video URL", 2);
                               } else {
                                 _setVideoType(value.text!);
                                 setState(() => _isSearching = true);
@@ -139,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                           } else {
                             _showSnackBar(
-                                "Empty content pasted! Please try again.");
+                                "Empty content pasted! Please try again.", 2);
                           }
 
                           setState(() => _isLoading = false);
@@ -177,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () async {
                       if (_isDownloading) {
                         _showSnackBar(
-                            "Try again later! Downloading in progress.");
+                            "Try again later! Downloading in progress.", 2);
                       } else {
                         setState(() {
                           _selectedQualityIndex = 0;
@@ -297,35 +289,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 : Container(),
             _isDownloading ? SizedBox(height: 20.h) : Container(),
-            MyBannerAd(
-              type: MyBannerType.medium,
-              adUnitId: AdHelper.homeScreenBannerAdUnitId,
-            ),
             SizedBox(height: 20.h),
           ],
         ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _interstitialAd.dispose();
-  }
-
-  void _loadInterstitalAd({required String adUnitId}) {
-    InterstitialAd.load(
-      adUnitId: adUnitId,
-      request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: ((ad) {
-          setState(() => _interstitialAd = ad);
-          setState(() => _isInterstitialAdReady = true);
-        }),
-        onAdFailedToLoad: (error) {
-          setState(() => _isInterstitialAdReady = false);
-        },
       ),
     );
   }
@@ -380,8 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required VideoType type,
     required String url,
   }) async {
-    final _api = VideoDownloaderAPI();
-    final _repository = VideoDownloaderRepository(api: _api);
+    final _repository = VideoDownloaderRepository();
 
     switch (type) {
       case VideoType.facebook:
@@ -397,10 +362,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  _showSnackBar(String title) {
+  _showSnackBar(String title, int duration) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: const Duration(seconds: 5),
+        duration: Duration(seconds: duration),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.w),
         ),
@@ -434,9 +399,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _performDownloading(String url) async {
-    if (_isInterstitialAdReady) {
-      _interstitialAd.show();
-    }
     Dio dio = Dio();
     var permissions = await [Permission.storage].request();
 
@@ -463,7 +425,6 @@ class _HomeScreenState extends State<HomeScreen> {
           deleteOnError: true,
         ).then((_) async {
           widget.onDownloadCompleted();
-          _loadInterstitalAd(adUnitId: AdHelper.downloadInterstialAdUnitId);
 
           setState(() {
             _isDownloading = false;
@@ -474,12 +435,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _video = null;
           });
           _controller.text = "";
-
-          _showSnackBar("Video downloaded succesfully.");
-          await Future.delayed(const Duration(seconds: 1));
-          if (_isInterstitialAdReady) {
-            _interstitialAd.show();
-          }
+          _showSnackBar("Video downloaded succesfully.", 2);
         });
       } on DioError catch (e) {
         setState(() {
@@ -489,15 +445,14 @@ class _HomeScreenState extends State<HomeScreen> {
           _video = null;
         });
 
-        _showSnackBar("Oops! ${e.message}");
+        _showSnackBar("Oops! ${e.message}", 2);
       }
     } else {
-      _showSnackBar("No permission to read and write.");
+      _showSnackBar("No permission to read and write.", 2);
     }
   }
 
   Future<void> _onLinkPasted(String url) async {
-    _loadInterstitalAd(adUnitId: AdHelper.downloadInterstialAdUnitId);
     var _response = await _getExtrationMethod(type: _videoType, url: url);
     setState(() => _video = _response);
     if (_video != null) {
@@ -630,7 +585,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () async {
                       if (_isDownloading) {
                         _showSnackBar(
-                            "Try again later! Downloading in progress.");
+                            "Try again later! Downloading in progress.", 2);
                       } else {
                         Navigator.pop(context);
                         await _performDownloading(
@@ -663,10 +618,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: 5.h),
-                  MyBannerAd(
-                    type: MyBannerType.full,
-                    adUnitId: AdHelper.videosScreenBannerAdUnitId,
-                  )
                 ],
               ),
             ),
