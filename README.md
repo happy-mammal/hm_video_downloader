@@ -1,17 +1,19 @@
 # HM Video Downloader
 A simple fast and secure video downloading app. It downloads videos from multiple sources. It just needs a video link and you can then download the video with just one click. Automatically detects the supported video links in any format so you wont have to worry about it. 
 
-## It supports multiple sources few of them are:
+## Check it out on:
+*  Play Store: https://play.google.com/store/apps/details?id=com.happymammal.hmvideodownloader
+
+## It supports multiple sources:
 * YT Shorts
 * Facebook
 * Twitter
 * Instagram
 
-## Implementations
+## Implementations:
 * Dio (for downloading)
 * Flutter Video Player & Chewie (for built in video player)
 * In App Update & Review
-* 
 
 ## Some of its features:
 
@@ -63,6 +65,3 @@ lib
 ![Group 14](https://user-images.githubusercontent.com/78479679/161298333-43a7bb01-8eb9-4197-bd78-65555020da58.jpg)
 
 ![Group 15](https://user-images.githubusercontent.com/78479679/161298351-c1d16350-c43b-490f-9258-e0f9ca0b98b0.jpg)
-
-## Check it out on:
-*  Play Store: https://play.google.com/store/apps/details?id=com.happymammal.hmvideodownloader
