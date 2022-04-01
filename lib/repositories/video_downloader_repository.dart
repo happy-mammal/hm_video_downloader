@@ -7,7 +7,7 @@ import 'package:insta_extractor/insta_extractor.dart';
 
 class VideoDownloaderRepository {
   VideoDownloaderAPI api = VideoDownloaderAPI(
-    apiKey: "e280a2cbbcmsh2cdb4231e2c4f66p1abbecjsn94c0c8448e7d",
+    apiKey: "pleasereplaceitwithyourownapikeyrespectthework",
   );
 
   Future<VideoDownloadModel?> getAvailableYTVideos(String url) async {
